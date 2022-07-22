@@ -17,6 +17,7 @@ function AddToList() {
 
     console.log(inobject.value);
     console.log('shayan and sibi');
+    console.log('shayan and sibi 2');
 
     if (l1 != 0) {
         for (var i = 0; i < l1; i++) {
