@@ -15,7 +15,8 @@ function AddToList() {
     var l1 = newulobject.children.length;
     var l2 = latulobject.children.length;
 
-    //console.log(inobject.value);
+    console.log(inobject.value);
+    console.log('shayan and sibi');
 
     if (l1 != 0) {
         for (var i = 0; i < l1; i++) {
