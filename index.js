@@ -1,28 +1,31 @@
-let inobject = document.getElementById('task');     //inObject (camel casing)
-let ulobject = document.getElementById('new-display');   //use better names like completed list
-let btnobject = document.getElementById('btnid');  // use descriptive names instead
-let completedListObj = document.getElementById('completed-list');
-let inCompleteListObj = document.getElementById('incomplete-list');
+let inputObject = document.getElementById('taskInput');     //inputObject (camel casing)
+let itemsToDoObj = document.getElementById('itemsToDo');   //use better names like completed list
+let submitButtonObj = document.getElementById('submitNewTask');  // use descriptive names instead
+let completedListObj = document.getElementById('completedList');
+let inCompleteListObj = document.getElementById('incompleteList');
 
-function AddToList() {
-
-    if (inobject.value == "") {
+function addToList() {
+    console.log('Add function called');
+    if (inputObject.value == "") {
         return;
     }
 
-    console.log(inobject.value);
+    task = {taskId : idValue, taskName : inputObject.value, taskStatus : 'incomplete'};
+    itemsToDoArray.push(task);
+    idValue ++;
+    console.log(itemsToDoArray);
 
-    var l1 = completedListObj.children.length;
+   /* var l1 = completedListObj.children.length;
     var l2 = inCompleteListObj.children.length;
 
-    console.log(inobject.value);
+    console.log(inputObject.value);
     console.log('shayan and sibi');
     console.log('shayan and sibi 2');
 
     //Move small functionalities into different functions
     if (l1) {   //used l1 instead of l1!=0
         for (var i = 0; i < l1; i++) {   //use for each
-            if (inobject.value == completedListObj.children[i].innerHTML) {
+            if (inputObject.value == completedListObj.children[i].innerHTML) {
                 console.log('shayan');
                 alert("Task Already Entered");
                 return;
@@ -32,12 +35,12 @@ function AddToList() {
 
     if (l2) {
         for (var i = 0; i < l2; i++) {
-            if (inobject.value == inCompleteListObj.children[i].innerHTML) {
+            if (inputObject.value == inCompleteListObj.children[i].innerHTML) {
                 alert("Task Already Entered");
                 return;
             }
         }
-    }
+    }   */
 
     //use single html for all elements (add html block through JS)
     let newliElement = document.createElement('li');
@@ -46,7 +49,7 @@ function AddToList() {
     newinElement.type = "checkbox";
 
     let newpElement = document.createElement('p');
-    newpElement.textContent = inobject.value;
+    newpElement.textContent = task.taskName;
 
     let newrElement = document.createElement('span');
     newrElement.innerHTML = "&cross;";
@@ -54,13 +57,13 @@ function AddToList() {
     newliElement.appendChild(newinElement);
     newliElement.appendChild(newpElement);
     newliElement.appendChild(newrElement);
-    ulobject.appendChild(newliElement);
+    itemsToDoObj.appendChild(newliElement);
 
     let newrpElement = document.createElement('li');
-    newrpElement.textContent = inobject.value;
+    newrpElement.textContent = task.taskName;
     inCompleteListObj.appendChild(newrpElement);
 
-    inobject.value = "";
+    inputObject.value = "";
 }
 
 function RemoveFromList(RemoveElement) {
@@ -88,10 +91,11 @@ function RemoveFromList(RemoveElement) {
 }
 
 function CompletedList(AddElement) {
-    if (AddElement.checked == true) {   //no need to write == true
+    if (AddElement.checked) {   //no need to write == true
         let parentobject = AddElement.parentElement;
         let parainnewlist = document.createElement('li');
         parainnewlist.textContent = parentobject.children[1].innerHTML;
+        console.log(itemsToDoArray.find((task) => task.taskName === AddElement.parentElement.children[1].innerHTML));
         completedListObj.appendChild(parainnewlist);
 
         var z = inCompleteListObj.children.length;
@@ -104,7 +108,7 @@ function CompletedList(AddElement) {
 
     }
 
-    else if (AddElement.checked == false) {   // use !AdddElement.checked 
+    else if (!AddElement.checked) {   // use !AdddElement.checked 
         var x = completedListObj.children.length;
 
         for (var i = 0; i < x; i++) {
@@ -118,9 +122,12 @@ function CompletedList(AddElement) {
     }
 }
 
-btnobject.addEventListener("click", AddToList);
+let itemsToDoArray = [];
+let idValue = 0;
 
-inobject.addEventListener('keydown', function (event) {
+submitButtonObj.addEventListener("click", addToList);
+
+inputObject.addEventListener('keydown', function (event) {
 
     if (event.key === 'enter') {
         event.preventDefault();
@@ -128,7 +135,7 @@ inobject.addEventListener('keydown', function (event) {
     }
 });
 
-ulobject.addEventListener("click", function (event) {   //use ids of checkbox, cross
+itemsToDoObj.addEventListener("click", function (event) {   //use ids of checkbox, cross
     if (event.target.tagName == "SPAN") {
         RemoveFromList(event.target);
     }
