@@ -1,0 +1,57 @@
+h1 {
+    text-align: center;
+    text-transform: uppercase;
+    color: green;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+#div-to-do{
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 10px;
+  margin-left: 300px;
+  margin-right: 300px;
+  background-color: lightblue;
+}
+
+#div-complete{
+  text-decoration: overline underline;
+  float: left;
+  margin-left: 200px;
+  padding: 5px;
+}
+
+#div-incomplete{
+  text-decoration: overline underline;
+  float: right;
+  margin-right: 200px;
+  padding: 5px;
+}
+
+#itemsToDo{
+  list-style-type: square;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+}
+
+#completedList, #incompleteList{
+  list-style-type: circle;
+}
+
+#deleteButton{
+  appearance: none;
+  border: none;
+  outline: none;
+  background: none;
+}
+
+#submitNewTask{
+    background-color: black;
+    font-family: Arial, Helvetica, sans-serif;
+    color: azure;
+    border: none;
+    border-radius: 8px;
+}

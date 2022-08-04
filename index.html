@@ -5,15 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To Do List</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     
-   
-    <h1 style="text-align: center;">This is a To Do List</h1>
+    <h1>This is a To Do List</h1>
 
     <form style="text-align: center;">
-        Enter Task: <input type="text" id="taskInput">
-        <input id="submitNewTask" type="button" value="+"  >
+        <input type="text" id="taskInput" placeholder="Enter a Task to do">
+        <input id="submitNewTask" type="button" value="Add Task">
         
     </form>
 
@@ -31,16 +32,12 @@
         </ul> 
     </div>
 
-  <br><br>
-
     <div  id="div-incomplete"><strong>Incomplete:</strong><br><br>
       <ul id="incompleteList">     
         </ul>
     </div>
 
     <script src="example.js"></script>
-
-    
-    
+ 
 </body>
 </html>

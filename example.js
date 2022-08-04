@@ -18,9 +18,8 @@ function addToMainList() {
     task = {taskId : idValue, taskName : inputObject.value, taskStatus : 'incomplete'};
     itemsToDoArray.push(task);
     
-    itemsToDoObj.innerHTML +=`<li id=${idValue}> <input type=checkbox> <p>${task.taskName}</p> <span>&cross;</span> </li>`;
-     
-   
+    itemsToDoObj.innerHTML +=`<li id=${idValue}> <input type=checkbox> <p>${task.taskName}</p> <input id="deleteButton" type="button" value="Delete Task"> </li>`;
+    
     /* let newListItemObject = document.createElement('li');
 
     let newCheckBoxObject = document.createElement('input');
@@ -72,7 +71,7 @@ let idValue = 1;
 submitButtonObj.addEventListener("click", addToMainList);
 
  itemsToDoObj.addEventListener("click", function (event) {   //use ids of checkbox, cross
-    if (event.target.tagName == "SPAN") {
+    if (event.target.id == "deleteButton") {
         removeFromLowerList(event.target);
         removeFromMainList(event.target);
     } 
