@@ -19,6 +19,7 @@ function addToMainList() {
     taskName: inputObject.value,
     taskStatus: false,
   };
+
   itemsToDoArray.push(task);
 
   itemsToDoObj.innerHTML += `<li id=${idValue}> <input type=checkbox> <p>${task.taskName}</p> <input id="deleteButton" type="button" value="Delete Task"> </li>`;
@@ -64,7 +65,6 @@ let idValue = 1;
 submitButtonObj.addEventListener("click", addToMainList);
 
 itemsToDoObj.addEventListener("click", function (event) {
-  //use ids of checkbox, cross
   if (event.target.id == "deleteButton") {
     removeFromLowerList(event.target);
     removeFromMainList(event.target);
