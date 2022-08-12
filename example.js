@@ -4,7 +4,9 @@ let submitButtonObj = document.getElementById("submitNewTask");
 let completedListObj = document.getElementById("completedList");
 let inCompleteListObj = document.getElementById("incompleteList");
 
-function addToMainList() {
+function addToMainList(e) {
+  e.preventDefault();
+
   if (inputObject.value == "") {
     return;
   }
@@ -22,14 +24,7 @@ function addToMainList() {
 
   itemsToDoArray.push(task);
 
-  itemsToDoObj.innerHTML += `<li id=${idValue}> <input type=checkbox> <p>${task.taskName}</p> <input id="deleteButton" type="button" value="Delete Task"> </li>`;
-
-  itemsToDoArray.forEach((task) => {
-    if (task.taskStatus == true) {
-      let checkedElement = document.getElementById(task.taskId);
-      checkedElement.children[0].checked = true;
-    }
-  });
+  $('#itemsToDo').append(`<li id=${idValue}> <input type=checkbox> <p>${task.taskName}</p> <input id="deleteButton" type="button" value="Delete Task"> </li>`);
 
   inCompleteListObj.innerHTML += `<li id=lower${idValue}>${task.taskName}</li>`;
   idValue++;

@@ -6,20 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To Do List</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 
 <body>
     
     <form class="header">
-
         <h2 style="margin:5px">My To Do List</h2>
         <input type="text" id="taskInput" placeholder="Enter a Task to do">
-        <input id="submitNewTask" type="button" value="Add Task">
-        
+        <button id="submitNewTask" type="submit">Add Task</button>        
     </form>
 
    <div  id="div-to-do">
-     <ul id="itemsToDo"> 
+     <ul id="itemsToDo">
     </ul>
    </div>
 
