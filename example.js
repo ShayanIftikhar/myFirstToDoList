@@ -24,9 +24,22 @@ function addToMainList(e) {
 
   itemsToDoArray.push(task);
 
-  $('#itemsToDo').append(`<li id=${idValue}> <input type=checkbox> <p>${task.taskName}</p> <input id="deleteButton" type="button" value="Delete Task"> </li>`);
+  $("#itemsToDo").append(
+    `<li id=${idValue} class="list-group-item d-flex align-items-center border-0 mb-2 rounded"
+                      style="background-color: #f4f6f7;">
+                      <input class="form-check-input me-2" type="checkbox" value="" aria-label="..."/>
+                      ${task.taskName}
+                      <button class="btn btn-info ms-2" id="deleteButton" type="button">Delete</button>
+                    </li>`
+  );
 
-  inCompleteListObj.innerHTML += `<li id=lower${idValue}>${task.taskName}</li>`;
+  $("#incompleteList").append(
+    `<li id=lower${idValue} class="list-group-item d-flex align-items-center border-0 mb-2 rounded"
+                      style="background-color: #f4f6f7;">
+                      ${task.taskName}
+                    </li>`
+  );
+
   idValue++;
   inputObject.value = "";
 }
@@ -51,7 +64,10 @@ function addToLowerList(selectedElement, status, addObj) {
   let idOfTask = selectedElement.parentElement.id;
   let taskToMove = itemsToDoArray.find((task) => task.taskId == idOfTask);
   taskToMove.taskStatus = status;
-  addObj.innerHTML += `<li id=lower${idOfTask}>${taskToMove.taskName}</li>`;
+  addObj.innerHTML += `<li id=lower${idOfTask} class="list-group-item d-flex align-items-center border-0 mb-2 rounded"
+  style="background-color: #f4f6f7;">
+  ${taskToMove.taskName}
+</li>`;
 }
 
 let itemsToDoArray = [];
