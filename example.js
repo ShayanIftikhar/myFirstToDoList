@@ -4,6 +4,91 @@ let submitButtonObj = document.getElementById("submitNewTask");
 let completedListObj = document.getElementById("completedList");
 let inCompleteListObj = document.getElementById("incompleteList");
 
+let jokeParagraphObj = document.getElementById("jokeParagraph");
+
+let emailLogInObj = document.getElementById("emailInputLogIn");
+let passwordLogInObj = document.getElementById("passwordInputLogIn");
+let logInButtonObj = document.getElementById("logInButton");
+
+let signUpNameObj = document.getElementById("signUpName");
+let signUpAgeObj = document.getElementById("signUpAge");
+let signUpEmailObj = document.getElementById("signUpEmail");
+let signUpPasswordObj = document.getElementById("signUpPassword");
+let signUpButtonObj = document.getElementById("signUpSubmitButton");
+
+let takeToSignUpBtnObj = document.getElementById("takeToSignUpBtn");
+
+/* function getData() {
+  url = "https://api.chucknorris.io/jokes/random";
+  fetch(url)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data.value);
+      jokeParagraphObj.textContent = data.value;
+    });
+} */
+
+$(logInButtonObj).click(function logIn() {
+  console.log("inside login");
+  url = "https://api-nodejs-todolist.herokuapp.com/user/login";
+
+  data = {
+    email: emailLogInObj.value,
+    password: passwordLogInObj.value,
+  };
+
+  params = {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+  fetch(url, params)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data);
+      if (data === "Unable to login") {
+        alert("Incorrect Username or Password");
+        return;
+      } else {
+        $("#logInBody").empty();
+        $("#logInBody").load("index.html");
+      }
+    });
+});
+
+$(signUpButtonObj).click(function signUp() {
+  console.log("inside signup finction");
+  url = "https://api-nodejs-todolist.herokuapp.com/user/register";
+
+  data = {
+    name: signUpNameObj.value,
+    email: signUpEmailObj.value,
+    password: signUpPasswordObj.value,
+    age: signUpAgeObj.value,
+  };
+
+  params = {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+  fetch(url, params)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data);
+    });
+});
+
 function addToMainList(e) {
   e.preventDefault();
 
@@ -69,6 +154,11 @@ function addToLowerList(selectedElement, status, addObj) {
   ${taskToMove.taskName}
 </li>`;
 }
+
+$(takeToSignUpBtnObj).click(function goToSignUpPage() {
+  $("#logInBody").empty();
+  $("#logInBody").load("signUp.html");
+});
 
 let itemsToDoArray = [];
 let idValue = 1;
