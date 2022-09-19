@@ -1,4 +1,4 @@
-let inputObject = document.getElementById("taskInput");
+//let inputObject = document.getElementById("taskInput");
 let itemsToDoObj = document.getElementById("itemsToDo");
 let submitButtonObj = document.getElementById("submitNewTask");
 let completedListObj = document.getElementById("completedList");
@@ -6,8 +6,6 @@ let inCompleteListObj = document.getElementById("incompleteList");
 
 let jokeParagraphObj = document.getElementById("jokeParagraph");
 
-let emailLogInObj = document.getElementById("emailInputLogIn");
-let passwordLogInObj = document.getElementById("passwordInputLogIn");
 let logInButtonObj = document.getElementById("logInButton");
 
 let signUpNameObj = document.getElementById("signUpName");
@@ -18,31 +16,65 @@ let signUpButtonObj = document.getElementById("signUpSubmitButton");
 
 let takeToSignUpBtnObj = document.getElementById("takeToSignUpBtn");
 
-/* function getData() {
-  url = "https://api.chucknorris.io/jokes/random";
-  fetch(url)
+function getAllTasks(token) {
+  url = "https://api-nodejs-todolist.herokuapp.com/task";
+  params = {
+    method: "get",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  fetch(url, params)
     .then((response) => {
       return response.json();
     })
-    .then((data) => {
-      console.log(data.value);
-      jokeParagraphObj.textContent = data.value;
-    });
-} */
+    .then((taskData) => {
+      let taskArray = taskData.data;
+      taskArray.forEach((element) => {
+        $("#itemsToDo").append(
+          `<li id=${element._id} class="list-group-item d-flex align-items-center border-0 mb-2 rounded"
+                            style="background-color: #f4f6f7;">
+                            <input id= box${element._id} class="form-check-input me-2" type="checkbox" value="" aria-label="..."/>
+                            ${element.description}
+                            <button class="btn btn-info ms-2" id="deleteButton" type="button">Delete</button>
+                          </li>`
+        );
+        document.getElementById("box" + element._id).checked =
+          element.completed;
 
-$(logInButtonObj).click(function logIn() {
-  console.log("inside login");
-  url = "https://api-nodejs-todolist.herokuapp.com/user/login";
+        let checkObj = document.getElementById("box" + element._id);
+
+        if (checkObj.checked) {
+          $("#completedList")
+            .append(`<li id=lower${element._id} class="list-group-item d-flex align-items-center border-0 mb-2 rounded"
+            style="background-color: #f4f6f7;">
+            ${element.description}
+          </li>`);
+        } else {
+          $("#incompleteList")
+            .append(`<li id=lower${element._id} class="list-group-item d-flex align-items-center border-0 mb-2 rounded"
+            style="background-color: #f4f6f7;">
+            ${element.description}
+          </li>`);
+        }
+      });
+    });
+}
+
+function updateTaskToCompleted(elementid) {
+  url = "https://api-nodejs-todolist.herokuapp.com/task/" + elementid;
 
   data = {
-    email: emailLogInObj.value,
-    password: passwordLogInObj.value,
+    completed: true,
   };
 
   params = {
-    method: "post",
+    method: "put",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${tokenValue}`,
     },
     body: JSON.stringify(data),
   };
@@ -50,33 +82,30 @@ $(logInButtonObj).click(function logIn() {
     .then((response) => {
       return response.json();
     })
-    .then((data) => {
-      console.log(data);
-      if (data === "Unable to login") {
-        alert("Incorrect Username or Password");
-        return;
-      } else {
-        $("#logInBody").empty();
-        $("#logInBody").load("index.html");
-      }
+    .then((taskData) => {
+      console.log(taskData);
+      removeFromLowerList(taskData.data._id);
+      addToLowerList(
+        taskData.data._id,
+        "#completedList",
+        taskData.data.description
+      );
     });
-});
+}
 
-$(signUpButtonObj).click(function signUp() {
-  console.log("inside signup finction");
-  url = "https://api-nodejs-todolist.herokuapp.com/user/register";
+function updateTaskToIncomplete(elementid) {
+  console.log("inside update task Incomplete function");
+  url = "https://api-nodejs-todolist.herokuapp.com/task/" + elementid;
 
   data = {
-    name: signUpNameObj.value,
-    email: signUpEmailObj.value,
-    password: signUpPasswordObj.value,
-    age: signUpAgeObj.value,
+    completed: false,
   };
 
   params = {
-    method: "post",
+    method: "put",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${tokenValue}`,
     },
     body: JSON.stringify(data),
   };
@@ -84,96 +113,238 @@ $(signUpButtonObj).click(function signUp() {
     .then((response) => {
       return response.json();
     })
-    .then((data) => {
-      console.log(data);
+    .then((taskData) => {
+      console.log(taskData);
+      removeFromLowerList(taskData.data._id);
+      addToLowerList(
+        taskData.data._id,
+        "#incompleteList",
+        taskData.data.description
+      );
     });
-});
+}
 
-function addToMainList(e) {
-  e.preventDefault();
+function deleteTask(element) {
+  url = "https://api-nodejs-todolist.herokuapp.com/task/" + element.id;
 
-  if (inputObject.value == "") {
-    return;
-  }
+  params = {
+    method: "delete",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${tokenValue}`,
+    },
 
-  if (itemsToDoArray.find((task) => task.taskName === inputObject.value)) {
-    alert("Task Already Entered");
-    return;
-  }
-
-  task = {
-    taskId: idValue,
-    taskName: inputObject.value,
-    taskStatus: false,
+    body: JSON.stringify(data),
   };
 
-  itemsToDoArray.push(task);
-
-  $("#itemsToDo").append(
-    `<li id=${idValue} class="list-group-item d-flex align-items-center border-0 mb-2 rounded"
-                      style="background-color: #f4f6f7;">
-                      <input class="form-check-input me-2" type="checkbox" value="" aria-label="..."/>
-                      ${task.taskName}
-                      <button class="btn btn-info ms-2" id="deleteButton" type="button">Delete</button>
-                    </li>`
-  );
-
-  $("#incompleteList").append(
-    `<li id=lower${idValue} class="list-group-item d-flex align-items-center border-0 mb-2 rounded"
-                      style="background-color: #f4f6f7;">
-                      ${task.taskName}
-                    </li>`
-  );
-
-  idValue++;
-  inputObject.value = "";
+  fetch(url, params)
+    .then((response) => {
+      return response.json();
+    })
+    .then((taskData) => {
+      console.log(taskData);
+      removeFromLowerList(element.id);
+      element.remove();
+    });
 }
 
-function removeFromMainList(removeElement) {
-  let idOfRemoveableTask = removeElement.parentElement.id;
-  let indexOfTaskToBeRemoved = itemsToDoArray.findIndex(
-    (task) => task.taskId == idOfRemoveableTask
-  );
-  itemsToDoArray.splice(indexOfTaskToBeRemoved, 1);
-  removeElement.parentElement.remove();
-}
+$(document).ready(function () {
+  $(document).on("click", "#submitNewTask", function (element) {
+    element.preventDefault();
+    console.log("inside Add Task");
 
-function removeFromLowerList(selectedElement) {
-  let removeableObject = document.getElementById(
-    "lower" + selectedElement.parentElement.id
-  );
+    let inputObject = document.getElementById("taskInput");
+
+    if (inputObject.value == "") {
+      return;
+    }
+
+    url = "https://api-nodejs-todolist.herokuapp.com/task";
+
+    data = {
+      description: inputObject.value,
+    };
+
+    params = {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${tokenValue}`,
+      },
+      body: JSON.stringify(data),
+    };
+    fetch(url, params)
+      .then((response) => {
+        return response.json();
+      })
+      .then((taskData) => {
+        console.log(taskData);
+        $("#itemsToDo").append(
+          `<li id=${taskData.data._id} class="list-group-item d-flex align-items-center border-0 mb-2 rounded"
+                            style="background-color: #f4f6f7;">
+                            <input id= box${taskData.data._id} class="form-check-input me-2" type="checkbox" value="" aria-label="..."/>
+                            ${taskData.data.description}
+                            <button class="btn btn-info ms-2" id="deleteButton" type="button">Delete</button>
+                          </li>`
+        );
+        $("#incompleteList").append(
+          `<li id=lower${taskData.data._id} class="list-group-item d-flex align-items-center border-0 mb-2 rounded"
+                            style="background-color: #f4f6f7;">
+                            ${taskData.data.description}
+                          </li>`
+        );
+      });
+    inputObject.value = "";
+  });
+});
+
+$(document).ready(function () {
+  $(document).on("click", "#logInButton", function (element) {
+    console.log("inside login function");
+    let emailLogInObj = document.getElementById("emailInputLogIn");
+    let passwordLogInObj = document.getElementById("passwordInputLogIn");
+
+    url = "https://api-nodejs-todolist.herokuapp.com/user/login";
+
+    data = {
+      email: emailLogInObj.value,
+      password: passwordLogInObj.value,
+    };
+
+    console.log(emailLogInObj.value);
+    console.log(passwordLogInObj.value);
+
+    params = {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    };
+    fetch(url, params)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        if (data === "Unable to login") {
+          alert("Incorrect Username or Password");
+          return;
+        } else {
+          tokenValue = data.token;
+          console.log(data.user.name);
+          $(document).ready(function () {
+            $("#logInBody").empty();
+            $("#logInBody").load("index.html");
+          });
+          getAllTasks(tokenValue);
+        }
+      });
+    //emailLogInObj.value = "";
+    //passwordLogInObj.value = "";
+  });
+});
+
+$(document).ready(function () {
+  $(document).on("click", "#signUpSubmitButton", function () {
+    console.log("inside signup function");
+
+    let signUpNameObj = document.getElementById("signUpName");
+    let signUpAgeObj = document.getElementById("signUpAge");
+    let signUpEmailObj = document.getElementById("signUpEmail");
+    let signUpPasswordObj = document.getElementById("signUpPassword");
+
+    url = "https://api-nodejs-todolist.herokuapp.com/user/register";
+
+    data = {
+      name: signUpNameObj.value,
+      email: signUpEmailObj.value,
+      password: signUpPasswordObj.value,
+      age: signUpAgeObj.value,
+    };
+
+    params = {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    };
+    fetch(url, params)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        tokenValue = data.token;
+        $(document).ready(function () {
+          $("#logInBody").empty();
+          $("#logInBody").load("index.html");
+        });
+        getAllTasks(tokenValue);
+      });
+  });
+});
+
+$(document).ready(function () {
+  $(document).on("click", "#logOutLink", function () {
+    console.log("inside logout function");
+
+    url = "https://api-nodejs-todolist.herokuapp.com/user/logout";
+
+    params = {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${tokenValue}`,
+      },
+      body: JSON.stringify(data),
+    };
+    fetch(url, params)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        $(document).ready(function () {
+          $("#logInBody").empty();
+          $("#logInBody").load("login.html");
+        });
+      });
+  });
+});
+
+function removeFromLowerList(selectedElementId) {
+  let removeableObject = document.getElementById("lower" + selectedElementId);
   removeableObject.remove();
 }
 
-function addToLowerList(selectedElement, status, addObj) {
-  let idOfTask = selectedElement.parentElement.id;
-  let taskToMove = itemsToDoArray.find((task) => task.taskId == idOfTask);
-  taskToMove.taskStatus = status;
-  addObj.innerHTML += `<li id=lower${idOfTask} class="list-group-item d-flex align-items-center border-0 mb-2 rounded"
+function addToLowerList(selectedElementId, addObj, taskDescription) {
+  $(addObj)
+    .append(`<li id=lower${selectedElementId} class="list-group-item d-flex align-items-center border-0 mb-2 rounded"
   style="background-color: #f4f6f7;">
-  ${taskToMove.taskName}
-</li>`;
+  ${taskDescription}
+</li>`);
 }
 
-$(takeToSignUpBtnObj).click(function goToSignUpPage() {
-  $("#logInBody").empty();
-  $("#logInBody").load("signUp.html");
+$(document).ready(function () {
+  $(document).on("click", "#takeToSignUpBtn", function () {
+    $("#logInBody").empty();
+    $("#logInBody").load("signUp.html");
+  });
 });
 
 let itemsToDoArray = [];
 let idValue = 1;
+let tokenValue;
 
-submitButtonObj.addEventListener("click", addToMainList);
-
-itemsToDoObj.addEventListener("click", function (event) {
-  if (event.target.id == "deleteButton") {
-    removeFromLowerList(event.target);
-    removeFromMainList(event.target);
-  } else if (event.target.tagName == "INPUT" && event.target.checked) {
-    removeFromLowerList(event.target);
-    addToLowerList(event.target, true, completedListObj);
-  } else if (event.target.tagName == "INPUT" && !event.target.checked) {
-    removeFromLowerList(event.target);
-    addToLowerList(event.target, false, inCompleteListObj);
-  }
+$(document).ready(function () {
+  $(document).on("click", itemsToDoObj, function (event) {
+    if (event.target.type == "checkbox" && event.target.checked) {
+      updateTaskToCompleted(event.target.parentElement.id);
+    } else if (event.target.type == "checkbox" && !event.target.checked) {
+      updateTaskToIncomplete(event.target.parentElement.id);
+    } else if (event.target.id == "deleteButton") {
+      deleteTask(event.target.parentElement);
+    }
+  });
 });
