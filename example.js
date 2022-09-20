@@ -1,22 +1,8 @@
-//let inputObject = document.getElementById("taskInput");
-let itemsToDoObj = document.getElementById("itemsToDo");
-let submitButtonObj = document.getElementById("submitNewTask");
-let completedListObj = document.getElementById("completedList");
-let inCompleteListObj = document.getElementById("incompleteList");
+// Display all tasks for a user
+function getAllTasks(token, userName) {
+  sessionStorage.setItem("Authorization", token);
+  sessionStorage.setItem("Name", userName);
 
-let jokeParagraphObj = document.getElementById("jokeParagraph");
-
-let logInButtonObj = document.getElementById("logInButton");
-
-let signUpNameObj = document.getElementById("signUpName");
-let signUpAgeObj = document.getElementById("signUpAge");
-let signUpEmailObj = document.getElementById("signUpEmail");
-let signUpPasswordObj = document.getElementById("signUpPassword");
-let signUpButtonObj = document.getElementById("signUpSubmitButton");
-
-let takeToSignUpBtnObj = document.getElementById("takeToSignUpBtn");
-
-function getAllTasks(token) {
   url = "https://api-nodejs-todolist.herokuapp.com/task";
   params = {
     method: "get",
@@ -31,6 +17,7 @@ function getAllTasks(token) {
       return response.json();
     })
     .then((taskData) => {
+      $("#userNameLink").append(userName);
       let taskArray = taskData.data;
       taskArray.forEach((element) => {
         $("#itemsToDo").append(
@@ -63,6 +50,7 @@ function getAllTasks(token) {
     });
 }
 
+// Change tesk status to complete
 function updateTaskToCompleted(elementid) {
   url = "https://api-nodejs-todolist.herokuapp.com/task/" + elementid;
 
@@ -93,6 +81,7 @@ function updateTaskToCompleted(elementid) {
     });
 }
 
+// Change task status to incomplete
 function updateTaskToIncomplete(elementid) {
   console.log("inside update task Incomplete function");
   url = "https://api-nodejs-todolist.herokuapp.com/task/" + elementid;
@@ -114,7 +103,6 @@ function updateTaskToIncomplete(elementid) {
       return response.json();
     })
     .then((taskData) => {
-      console.log(taskData);
       removeFromLowerList(taskData.data._id);
       addToLowerList(
         taskData.data._id,
@@ -124,6 +112,7 @@ function updateTaskToIncomplete(elementid) {
     });
 }
 
+// Delete Task
 function deleteTask(element) {
   url = "https://api-nodejs-todolist.herokuapp.com/task/" + element.id;
 
@@ -142,12 +131,12 @@ function deleteTask(element) {
       return response.json();
     })
     .then((taskData) => {
-      console.log(taskData);
       removeFromLowerList(element.id);
       element.remove();
     });
 }
 
+// Submit New Task
 $(document).ready(function () {
   $(document).on("click", "#submitNewTask", function (element) {
     element.preventDefault();
@@ -178,7 +167,6 @@ $(document).ready(function () {
         return response.json();
       })
       .then((taskData) => {
-        console.log(taskData);
         $("#itemsToDo").append(
           `<li id=${taskData.data._id} class="list-group-item d-flex align-items-center border-0 mb-2 rounded"
                             style="background-color: #f4f6f7;">
@@ -198,9 +186,9 @@ $(document).ready(function () {
   });
 });
 
+// Log In
 $(document).ready(function () {
   $(document).on("click", "#logInButton", function (element) {
-    console.log("inside login function");
     let emailLogInObj = document.getElementById("emailInputLogIn");
     let passwordLogInObj = document.getElementById("passwordInputLogIn");
 
@@ -210,9 +198,6 @@ $(document).ready(function () {
       email: emailLogInObj.value,
       password: passwordLogInObj.value,
     };
-
-    console.log(emailLogInObj.value);
-    console.log(passwordLogInObj.value);
 
     params = {
       method: "post",
@@ -231,23 +216,17 @@ $(document).ready(function () {
           return;
         } else {
           tokenValue = data.token;
-          console.log(data.user.name);
-          $(document).ready(function () {
-            $("#logInBody").empty();
-            $("#logInBody").load("index.html");
-          });
-          getAllTasks(tokenValue);
+          $("#logInBody").empty();
+          $("#logInBody").load("index.html");
+          getAllTasks(tokenValue, data.user.name);
         }
       });
-    //emailLogInObj.value = "";
-    //passwordLogInObj.value = "";
   });
 });
 
+//Sign Up / Register
 $(document).ready(function () {
   $(document).on("click", "#signUpSubmitButton", function () {
-    console.log("inside signup function");
-
     let signUpNameObj = document.getElementById("signUpName");
     let signUpAgeObj = document.getElementById("signUpAge");
     let signUpEmailObj = document.getElementById("signUpEmail");
@@ -274,7 +253,6 @@ $(document).ready(function () {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
         tokenValue = data.token;
         $(document).ready(function () {
           $("#logInBody").empty();
@@ -285,10 +263,10 @@ $(document).ready(function () {
   });
 });
 
+// Log Out
 $(document).ready(function () {
   $(document).on("click", "#logOutLink", function () {
-    console.log("inside logout function");
-
+    console.log("entering logout function");
     url = "https://api-nodejs-todolist.herokuapp.com/user/logout";
 
     params = {
@@ -297,27 +275,26 @@ $(document).ready(function () {
         "Content-Type": "application/json",
         Authorization: `Bearer ${tokenValue}`,
       },
-      body: JSON.stringify(data),
     };
     fetch(url, params)
       .then((response) => {
         return response.json();
       })
-      .then((data) => {
-        console.log(data);
-        $(document).ready(function () {
-          $("#logInBody").empty();
-          $("#logInBody").load("login.html");
-        });
+      .then(() => {
+        $("#logInBody").empty();
+        $("#logInBody").load("login.html");
+        sessionStorage.clear();
       });
   });
 });
 
+// Removing item from lower list
 function removeFromLowerList(selectedElementId) {
   let removeableObject = document.getElementById("lower" + selectedElementId);
   removeableObject.remove();
 }
 
+// Adding item to lower list
 function addToLowerList(selectedElementId, addObj, taskDescription) {
   $(addObj)
     .append(`<li id=lower${selectedElementId} class="list-group-item d-flex align-items-center border-0 mb-2 rounded"
@@ -326,6 +303,7 @@ function addToLowerList(selectedElementId, addObj, taskDescription) {
 </li>`);
 }
 
+// Clicking on sign up / register now
 $(document).ready(function () {
   $(document).on("click", "#takeToSignUpBtn", function () {
     $("#logInBody").empty();
@@ -333,12 +311,11 @@ $(document).ready(function () {
   });
 });
 
-let itemsToDoArray = [];
-let idValue = 1;
 let tokenValue;
 
+// On click functionality for checkbox checked or unchecked, and delete button
 $(document).ready(function () {
-  $(document).on("click", itemsToDoObj, function (event) {
+  $(document).on("click", "#itemsToDo", function (event) {
     if (event.target.type == "checkbox" && event.target.checked) {
       updateTaskToCompleted(event.target.parentElement.id);
     } else if (event.target.type == "checkbox" && !event.target.checked) {
@@ -348,3 +325,17 @@ $(document).ready(function () {
     }
   });
 });
+
+// If Authorization Token Already Present in Session Storage
+if (sessionStorage.Authorization) {
+  console.log("There is something is session storage");
+  $("#logInBody").empty();
+  $("#logInBody").load("index.html");
+  tokenValue = sessionStorage.Authorization;
+  getAllTasks(sessionStorage.Authorization, sessionStorage.Name);
+}
+
+// If  No Authorization Token Present in Session Storage
+else {
+  console.log("Session storage is empty");
+}
